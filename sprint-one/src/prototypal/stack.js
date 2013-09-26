@@ -1,6 +1,27 @@
 var makeStack = function() {
-  // Hey! Copy your code from src/functional-shared/stack.js and paste it here
+    var stack = Object.create(stackMethods);
+    stack.storage = {};
+    stack.storageSize = 0;
+  return stack;
 };
 
-var stackMethods = {};
+var stackMethods = {
+  push : function(value){
+    this.storage[this.storageSize] = value;
+    this.storageSize++;
+  },
+
+  pop : function(){
+    if (this.storageSize) {
+      this.storageSize--;
+      var temp = this.storage[this.storageSize];
+      delete this.storage[this.storageSize];
+      return temp;
+    }
+  },
+
+  size : function(){
+    return this.storageSize;
+  }
+};
 
