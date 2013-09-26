@@ -26,40 +26,20 @@ var makeLinkedList = function(){
     return temp;
   };
 
-  list.contains = function(node,target){
+  list.contains = function(target, node){
+    if (node === undefined) {
+      node = list.head;
+    }
+
     if (node.value === target) {
       return true;
     } else if (node.next !== null) {
-      list.contains(node.next, target);
+      return list.contains(target, node.next);
     } else {
       return false;
     }
 
-/*
-      if (list.head !== null || list.tail != null){
-        
-      } esle{
-
-      }
-
-      if (list.head.value === target) {
-        return true;
-      } else{
-        list.head.next
-      }
-
-    }
-
-
-    if (list.head.value === target) {
-      return true;
-    } else if (list.head.next !== null) {
-      list.head.next.contains(target);
-    } else {
-      return false;
-    }
   };
-*/
   return list;
 };
 
