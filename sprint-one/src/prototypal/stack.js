@@ -1,7 +1,7 @@
 var makeStack = function() {
-    var stack = Object.create(stackMethods);
-    stack.storage = {};
-    stack.storageSize = 0;
+  var stack = Object.create(stackMethods);
+  stack.storage = {};
+  stack.storageSize = 0;
   return stack;
 };
 
