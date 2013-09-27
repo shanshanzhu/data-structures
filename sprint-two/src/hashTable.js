@@ -11,42 +11,51 @@ var HashTable = function(){
   this._storage = makeLimitedArray(this._limit);
 };
 
+HashTable.prototype.isLinkedList = function(obj) {
+  return obj.hasOwnProperty('head') && obj.hasOwnProperty('tail') && obj.hasOwnProperty('addtoTail') && obj.hasOwnProperty('removeHead') && obj.hasOwnProperty('contains');
+};
+
 HashTable.prototype.insert = function(k, v){
   var i = getIndexBelowMaxForKey(k, this._limit);
   console.log(i);
-  var iVal = this._storage.get(i);
-  var ll;
-  if (iVal){
-    if (typeof (iVal.addToTail) !== 'function') {
-      ll = makeLinkedList();
-      ll.addToTail({i:iVal});
-      this._storage.set(i,ll);
+  var existingVal = this._storage.get(i);
+  var linkedList;
+
+  if (existingVal !== undefined){
+    if (!this.isLinkedList(existingVal)) {
+      linkedList = makeLinkedList();
+      linkedList.addToTail([k,v]);
+      this._storage.set(i,linkedList);
     } else {
-      ll.addToTail({k:v});
+      linkedList.addToTail([k,v]);
     }
   } else {
-    this._storage.set(i, v);
+    this._storage.set(i, [k,v]);
   }
 };
 
 HashTable.prototype.retrieve = function(k){
   var i = getIndexBelowMaxForKey(k, this._limit);
-  var v = this._storage.get(i);
-  if (tyepof (v.addToTail) === 'function') {
-    if (v.contains(k)){ //rewrite the .contains function so it can check {k:};
-      v = v.findRemove(k).value; //need a findRemove function for linkedList
+  var bucket = this._storage.get(i);
+  if (this.isLinkedList(bucket)) {
+    var result = bucket.contains(k);
+    if (result[0]) {
+      return result[1];
     }
     else {
-      v = list.head.value;
-      v.removeHead();
+      bucket = undefined;
     }
-
   }
-  return v;
+  return bucket;
 };
 
 HashTable.prototype.remove = function(k){
   var i = getIndexBelowMaxForKey(k, this._limit);
+  var bucket = this._storage.get(i);
+  if (this.isLinkedList(bucket)){
+    var result = bucket.conatins(k);
+    if (result[0]) {}
+  }
   this._storage.each(function(value, key, collection){
     if(i === key) {
       collection.splice(key,1);
@@ -54,9 +63,7 @@ HashTable.prototype.remove = function(k){
   });
 };
 
-// NOTE: For this code to work, you will NEED the code from hashTableHelpers.js
-// Start by loading those files up and playing with the functions it provides.
-// You don't need to understand how they work, only their interface is important to you
+// COPIED FROM hashTableHelpers.js
 
 /*
  ********** NOTE: **********
@@ -106,3 +113,94 @@ var getIndexBelowMaxForKey = function(str, max){
   }
   return hash % max;
 };
+
+// COPIED CODE FROM linkedList.js below, modified for our purposes
+
+// Note: don't use an array to do this.
+
+var makeLinkedList = function(){
+  var list = {};
+  list.head = null;
+  list.tail = null;
+
+  list.addToTail = function(value){
+    if (arguments.length === 1) {
+      if (list.tail === null) {
+        list.tail = makeNode(value);
+        list.head = list.tail;
+      } else {
+        list.tail.next = makeNode(value);
+        list.tail = list.tail.next;
+      }
+    }
+  };
+
+  list.removeHead = function(){
+    if (list.head.next === null) {
+      list.tail = null;
+    }
+    var temp = list.head.value;
+    list.head = list.head.next;
+    return temp;
+  };
+
+  list.remove = function(target, node){
+    if (node === undefined) {
+      node = list.head;
+    }
+/*  var nextNode = node.next
+    if (list.head.value[0] === target) {
+      return list.removeHead();
+    } else if (node === null) {
+      return undefinded;
+    } else if (node.next.value[0] === target) {
+      var temp = node.next.value[1];
+      node.next = node.next.next;
+        if (node.next === null) {
+          list.tail = node;
+        }
+      return temp;
+    } else {
+      return list.remove(target, node.next);
+    }
+*/
+    if (list.head.value[0] === target) {
+      list.removeHead();
+    } else if (node.next.value[0] === target) { // this condition accommodates searching key, value array pairs in our hash table collision resolution process
+        node.next = node.next.next;
+        if (node.next === null) {
+          list.tail = node;
+        }
+    } else if (node.next.next !== null) {
+      list.remove(target, node.next);
+    } else {
+      return undefined;
+    }
+  };
+
+  list.contains = function(target, node){
+    if (node === undefined) {
+      node = list.head;
+    }
+
+    if (node.value[0] === target) { // this condition accommodates searching key, value array pairs in our hash table collision resolution process
+      return [true, node.value[1]];
+    } else if (node.next !== null) {
+      return list.contains(target, node.next);
+    } else {
+      return [false];
+    }
+  };
+
+
+  return list;
+};
+
+var makeNode = function(value){
+  var node = {};
+  node.value = value;
+  node.next = null;
+
+  return node;
+};
+
