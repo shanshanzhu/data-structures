@@ -1,6 +1,6 @@
 var HashTable = function(){
   this._limit = 8;
-
+  this._collisionIndexes = [];
   // Use a limited array to store inserted elements.
   // It'll keep you from using too much space. Usage:
   //
@@ -15,6 +15,12 @@ var HashTable = function(){
 HashTable.prototype.insert = function(k, v){
   var i = getIndexBelowMaxForKey(k, this._limit);
   console.log(i);
+  if (this._storage.get(i)) {
+    while (this._storage.get(i) ) {
+      //change i according to some rule
+    }
+    this._collisionIndexes[i] = i-1;
+  }
   this._storage.set(i, v);
 };
 
