@@ -1,6 +1,5 @@
 var HashTable = function(){
   this._limit = 8;
-  this._collisionIndexes = [];
   // Use a limited array to store inserted elements.
   // It'll keep you from using too much space. Usage:
   //
@@ -15,18 +14,35 @@ var HashTable = function(){
 HashTable.prototype.insert = function(k, v){
   var i = getIndexBelowMaxForKey(k, this._limit);
   console.log(i);
-  if (this._storage.get(i)) {
-    while (this._storage.get(i) ) {
-      //change i according to some rule
+  var iVal = this._storage.get(i);
+  var ll;
+  if (iVal){
+    if (typeof (iVal.addToTail) !== 'function') {
+      ll = makeLinkedList();
+      ll.addToTail({i:iVal});
+      this._storage.set(i,ll);
+    } else {
+      ll.addToTail({k:v});
     }
-    this._collisionIndexes[i] = i-1;
+  } else {
+    this._storage.set(i, v);
   }
-  this._storage.set(i, v);
 };
 
 HashTable.prototype.retrieve = function(k){
   var i = getIndexBelowMaxForKey(k, this._limit);
-  return this._storage.get(i);
+  var v = this._storage.get(i);
+  if (tyepof (v.addToTail) === 'function') {
+    if (v.contains(k)){ //rewrite the .contains function so it can check {k:};
+      v = v.findRemove(k).value; //need a findRemove function for linkedList
+    }
+    else {
+      v = list.head.value;
+      v.removeHead();
+    }
+
+  }
+  return v;
 };
 
 HashTable.prototype.remove = function(k){
