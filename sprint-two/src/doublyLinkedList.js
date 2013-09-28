@@ -32,11 +32,37 @@ var makeLinkedList = function(){
   };
 
   list.removeHead = function(){
- 
+    var temp;
+    if (this.head === null) {
+      return undefined;
+    } else if (this.head._next === null) {
+      temp = this.head._value;
+      this.head = null;
+      this.tail = this.head;
+      return temp;
+    } else {
+      temp = this.head._value;
+      this.head._next._prev = null;
+      this.head = this.head._next;
+      return temp;
+    }
   };
 
   list.removeTail = function(){
-
+    var temp;
+    if (this.tail === null) {
+      return undefined;
+    } else if (this.tail._prev === null) {
+      temp = this.tail._value;
+      this.tail = null;
+      this.head = this.tail;
+      return temp;
+    } else {
+      temp = this.tail._value;
+      this.tail._prev._next = null;
+      this.tail = this.tail._prev;
+      return temp;
+    }
   };
 
   list.contains = function(target, node){
