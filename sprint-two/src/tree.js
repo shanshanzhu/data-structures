@@ -3,6 +3,7 @@ var makeTree = function(value){
   var newTree = {};
   newTree.value = value;
   newTree.children = [];
+  newTree.parent = null;
 
   var _ = {};
   _.extend = function(destination, source) { // assumes all methods in source are at top level
@@ -18,6 +19,7 @@ var treeMethods = {};
 
 treeMethods.addChild = function(value){
   this.children.push(makeTree(value));
+  this.children[this.children.length-1].parent = this;
 };
 
 treeMethods.contains = function(targetValue, startingNode){
