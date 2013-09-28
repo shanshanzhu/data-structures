@@ -67,17 +67,16 @@ var makeDoublyLinkedList = function(){
 
   list.contains = function(target, node){
     if (node === undefined) {
-    	node = list.head;
+      node = list.head;
     }
-		if (node._value === target) {
-			return true;
-		} else if (node._next !== null) {
-			return list.contains(target, node._next);
-		} else {
-			return false;
-		}
+    if (node._value === target) {
+      return true;
+    } else if (node._next !== null) {
+      return list.contains(target, node._next);
+    } else {
+      return false;
+    }
   };
-	
   return list;
 };
 
